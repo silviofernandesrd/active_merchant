@@ -33,7 +33,8 @@ module ActiveMerchant #:nodoc:
         authorize: :post,
         capture: :get,
         refund: :post,
-        void: :get
+        void: :get,
+        store: :post
       }
 
       def initialize(options={})
