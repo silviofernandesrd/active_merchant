@@ -24,7 +24,8 @@ module ActiveMerchant #:nodoc:
         authorize: "direct",
         capture: "capture",
         refund: "refund",
-        void: "cancel"
+        void: "cancel",
+        store: "token"
       }
 
       HTTP_METHOD = {
@@ -113,10 +114,8 @@ module ActiveMerchant #:nodoc:
           card_due_date: "#{credit_card.month}/#{credit_card.year}",
           card_cvv: credit_card.verification_value
         }
-        commit(:token, post)
+        commit(:store, post)
       end
-
-
 
       def supports_scrubbing?
         true
