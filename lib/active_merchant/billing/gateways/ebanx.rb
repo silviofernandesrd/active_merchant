@@ -211,6 +211,8 @@ module ActiveMerchant #:nodoc:
           response.try(:[], "payment").try(:[], "status") == "PE"
         elsif action == :void
           response.try(:[], "payment").try(:[], "status") == "CA"
+        elsif action == :store
+          response.try(:[], "status") == "SUCCESS"
         else
           false
         end
@@ -222,6 +224,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def authorization_from(response)
+        return response["token"] if response["token"].present?
         response.try(:[], "payment").try(:[], "hash")
       end
 
