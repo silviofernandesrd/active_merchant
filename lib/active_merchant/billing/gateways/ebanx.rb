@@ -107,14 +107,8 @@ module ActiveMerchant #:nodoc:
         post = {}
         add_integration_key(post)
         add_operation(post)
+        add_credit_card(post, credit_card)
         post[:country] = options[:billing_address][:country] || options[:address][:country]
-        post[:payment_type_code] = CARD_BRAND[credit_card.brand.to_sym]
-        post[:creditcard] = {
-          card_number: credit_card.number,
-          card_name: credit_card.name,
-          card_due_date: "#{credit_card.month}/#{credit_card.year}",
-          card_cvv: credit_card.verification_value
-        }
         commit(:store, post)
       end
 
@@ -177,12 +171,16 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_payment(post, payment)
-        post[:payment][:payment_type_code] = CARD_BRAND[payment.brand.to_sym]
-        post[:payment][:creditcard] = {
-          card_number: payment.number,
-          card_name: payment.name,
-          card_due_date: "#{payment.month}/#{payment.year}",
-          card_cvv: payment.verification_value
+        add_credit_card(post[:payment], payment)
+      end
+
+      def add_credit_card(post, creditcard)
+        post[:payment_type_code] = CARD_BRAND[creditcard.brand.to_sym]
+        post[:creditcard] = {
+          card_number: creditcard.number,
+          card_name: creditcard.name,
+          card_due_date: "#{creditcard.month}/#{creditcard.year}",
+          card_cvv: creditcard.verification_value
         }
       end
 
