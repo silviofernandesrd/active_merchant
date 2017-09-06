@@ -138,7 +138,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_customer_data(post, payment, options)
-        post[:payment][:name] = payment.name
+        post[:payment][:name] = payment.try(:name) || options[:name]
         post[:payment][:email] = options[:email] || "unspecified@example.com"
         post[:payment][:document] = options[:document]
         post[:payment][:birth_date] = options[:birth_date] if options[:birth_date]
@@ -146,7 +146,7 @@ module ActiveMerchant #:nodoc:
 
       def add_customer_responsible_person(post, payment,  options)
         post[:payment][:responsible] = {}
-        post[:payment][:responsible][:name] = payment.name
+        post[:payment][:responsible][:name] = payment.try(:name) || options[:name]
         post[:payment][:responsible][:document] = options[:document]
         post[:payment][:responsible][:birth_date] = options[:birth_date] if options[:birth_date]
       end
@@ -176,6 +176,7 @@ module ActiveMerchant #:nodoc:
 
       def add_credit_card(post, creditcard)
         post[:payment_type_code] = CARD_BRAND[creditcard.brand.to_sym]
+        return post[:creditcard] = { token: creditcard.payment_cryptogram } if creditcard.is_a?(NetworkTokenizationCreditCard)
         post[:creditcard] = {
           card_number: creditcard.number,
           card_name: creditcard.name,
